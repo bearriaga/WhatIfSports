@@ -23,19 +23,19 @@ namespace WhatIfSports.Controllers
 
         // GET: api/Players
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Player>>> GetPlayers(string lastName = "", string position = "", int age = 0, int ageMin = 0, int ageMax = 0)
+        public async Task<ActionResult<IEnumerable<Player>>> GetPlayers(string last_name = "", string position = "", int age = 0, int age_min = 0, int age_max = 0)
         {
             var query = _context.Players.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(lastName))
-                query = query.Where(p => p.last_name.ToLower() == lastName.ToLower());
+            if (!string.IsNullOrWhiteSpace(last_name))
+                query = query.Where(p => p.last_name.ToLower() == last_name.ToLower());
             if (!string.IsNullOrWhiteSpace(position))
                 query = query.Where(p => p.position.ToLower() == position.ToLower());
             if (age > 0)
                 query = query.Where(p => p.age == age);
-            if (ageMin > 0)
-                query = query.Where(p => p.age >= ageMin && p.age != -1);
-            if (ageMax > 0)
-                query = query.Where(p => p.age <= ageMax && p.age != -1);
+            if (age_min > 0)
+                query = query.Where(p => p.age >= age_min && p.age != -1);
+            if (age_max > 0)
+                query = query.Where(p => p.age <= age_max && p.age != -1);
             return await query.ToListAsync();
         }
 

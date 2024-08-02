@@ -52,7 +52,7 @@
                 let searchParams = ''
                 let lastName = $('#lastName').val();
                 if (lastName)
-                    searchParams += `lastName=${lastName}&`;
+                    searchParams += `last_name=${lastName}&`;
 
                 let position = $('#position').val();
                 if (position)
@@ -64,11 +64,11 @@
 
                 let ageMin = $('#ageMin').val();
                 if (ageMin > 0)
-                    searchParams += `ageMin=${ageMin}&`;
+                    searchParams += `age_min=${ageMin}&`;
 
                 let ageMax = $('#ageMax').val();
                 if (ageMax > 0)
-                    searchParams += `ageMax=${ageMax}&`;
+                    searchParams += `age_max=${ageMax}&`;
 
                 $.get(`/api/v1/players?${searchParams}`, (data) => {
                     data.forEach(p => {
