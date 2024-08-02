@@ -25,6 +25,8 @@
         </thead>
         <tbody id="playerBody"></tbody>
     </table>
+    <p id="returnMessage"></p>
+
     <div id="spinner" class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
     </div>
@@ -45,7 +47,7 @@
             function getPlayers() {
                 $('#spinner').show();
                 $('#playerSearch').prop('disabled', true);
-                $('#playerBody').empty();
+                $('#playerBody, #returnMessage').empty();
 
                 let searchParams = ''
                 let lastName = $('#lastName').val();
@@ -69,11 +71,14 @@
                     searchParams += `ageMax=${ageMax}&`;
 
                 $.get(`/api/v1/players?${searchParams}`, (data) => {
-                    $('#spinner').hide();
-                    $('#playerSearch').prop('disabled', false);
                     data.forEach(p => {
-                        $('#playerBody').append(`<tr><td>${p.first_name}</td><td>${p.last_name}</td><td>${p.position}</td><td>${(p.age == -1) ? '' : p.age}</td><td>${p.age_diff}</td></tr>`);
+                        $('#playerBody').append(`<tr><td>${p.first_name}</td><td>${p.last_name}</td><td>${p.position}</td><td>${(!p.age) ? 'N/A' : p.age}</td><td>${(!p.age_diff) ? 'N/A' : p.age_diff}</td></tr>`);
                     });
+                }).fail(() => {
+                    $('#returnMessage').append("Failed Loading Players");
+                }).always(() => {
+                    $('#spinner').hide();
+                    $('#loadData').prop('disabled', false);
                 });
             }
         });
