@@ -90,7 +90,9 @@ namespace WhatIfSports.Controllers
                     _context.Players.Update(player);
                 else
                     _context.Players.Add(player);
-            }            
+            }
+
+            _context.SaveChanges();
 
             return "Players Updated";
         }
