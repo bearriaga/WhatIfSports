@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using WhatIfSports.Models;
 
 namespace WhatIfSports.Controllers
@@ -32,9 +33,9 @@ namespace WhatIfSports.Controllers
             if (age > 0)
                 query = query.Where(p => p.age == age);
             if (ageMin > 0)
-                query = query.Where(p => p.age >= ageMin);
+                query = query.Where(p => p.age >= ageMin && p.age != -1);
             if (ageMax > 0)
-                query = query.Where(p => p.age <= ageMax);
+                query = query.Where(p => p.age <= ageMax && p.age != -1);
             return await query.ToListAsync();
         }
 
@@ -52,9 +53,17 @@ namespace WhatIfSports.Controllers
             return player;
         }
 
-        private bool PlayerExists(int id)
+        //There would normally be some authentication/authorization here
+        [HttpPost]
+        public async Task<ActionResult<String>> LoadPlayers()
         {
-            return _context.Players.Any(e => e.id == id);
+            var client = new HttpClient();
+            HttpResponseMessage response = await client.GetAsync("https://api.cbssports.com/fantasy/players/list?version=3.0&SPORT=basketball&response_format=JSON");
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+            var returnObj = JsonConvert.DeserializeObject<CBSSportsPlayersReturnObject>(result);
+
+            return result;
         }
     }
 }

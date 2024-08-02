@@ -1,8 +1,81 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Players";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Players</h1>
+    <button id="playerSearch" class="btn btn-primary">
+        Search
+    </button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th><input id="lastName" type="text" placeholder="Last Name" /></th>
+                <th><input id="position" type="text" placeholder="Position" /></th>
+                <th>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6"><input id="age" type="number" placeholder="Age" /></div>
+                        <div class="col-md-4 col-sm-6"><input id="ageMin" type="number" placeholder="Minimum Age" min="1" /></div>
+                        <div class="col-md-4 col-sm-6"><input id="ageMax" type="number" placeholder="Maximum Age" min="1" /></div>
+                    </div>
+                </th>
+                <th>Age Diff</th>
+            </tr>
+        </thead>
+        <tbody id="playerBody"></tbody>
+    </table>
+    <div id="spinner" class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(() => {
+            getPlayers();
+
+            $('#playerSearch').on('click', () => {
+                getPlayers();
+            });
+            $('#lastName, #position, #age, #ageMin, #ageMax').keypress(function (e) {
+                if (e.which == 13) { getPlayers(); }
+            });
+
+            function getPlayers() {
+                $('#spinner').show();
+                $('#playerSearch').prop('disabled', true);
+                $('#playerBody').empty();
+
+                let searchParams = ''
+                let lastName = $('#lastName').val();
+                if (lastName)
+                    searchParams += `lastName=${lastName}&`;
+
+                let position = $('#position').val();
+                if (position)
+                    searchParams += `position=${position}&`;
+
+                let age = $('#age').val();
+                if (age > 0)
+                    searchParams += `age=${age}&`;
+
+                let ageMin = $('#ageMin').val();
+                if (ageMin > 0)
+                    searchParams += `ageMin=${ageMin}&`;
+
+                let ageMax = $('#ageMax').val();
+                if (ageMax > 0)
+                    searchParams += `ageMax=${ageMax}&`;
+
+                $.get(`/api/v1/players?${searchParams}`, (data) => {
+                    $('#spinner').hide();
+                    $('#playerSearch').prop('disabled', false);
+                    data.forEach(p => {
+                        $('#playerBody').append(`<tr><td>${p.first_name}</td><td>${p.last_name}</td><td>${p.position}</td><td>${(p.age == -1) ? '' : p.age}</td><td>${p.age_diff}</td></tr>`);
+                    });
+                });
+            }
+        });
+    </script>
+}

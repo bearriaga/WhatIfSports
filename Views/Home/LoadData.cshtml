@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Load Data";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Load Data</h1>
+    <button id="loadData" class="btn btn-success">Load Data</button>
+    <p id="returnMessage"></p>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(() => {
+            $('#loadData').on('click', () => {
+                $.post('/api/v1/players', (data) => {
+                    console.log(data);
+                });
+            });
+        });
+    </script>
+}
