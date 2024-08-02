@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WhatIfSports.Models;
 
@@ -11,9 +12,11 @@ using WhatIfSports.Models;
 namespace WhatIfSports.Migrations
 {
     [DbContext(typeof(WhatIfSportsContext))]
-    partial class WhatIfSportsContextModelSnapshot : ModelSnapshot
+    [Migration("20240802184501_MakingAgeNullable")]
+    partial class MakingAgeNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

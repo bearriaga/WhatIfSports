@@ -63,7 +63,36 @@ namespace WhatIfSports.Controllers
             var result = await response.Content.ReadAsStringAsync();
             var returnObj = JsonConvert.DeserializeObject<CBSSportsPlayersReturnObject>(result);
 
-            return result;
+            var uniquePositions = returnObj?.body.players.Select(p => p.position).Distinct().ToList();
+            List<SportsPosition> positions = new List<SportsPosition>();
+            foreach (var position in uniquePositions)
+            {
+                var sportsPosition = new SportsPosition()
+                {
+                    name = position,
+                    averageAge = (int)returnObj?.body.players.Where(y => y.position == position && y.age != null).Select(y => y.age).Average()
+                };
+                positions.Add(sportsPosition);
+            }
+                        
+            foreach (var cbsPlayer in returnObj.body.players)
+            {
+                Player player = new Player()
+                {
+                    id = cbsPlayer.id,
+                    first_name = cbsPlayer.firstname,
+                    last_name = cbsPlayer.lastname,
+                    position = cbsPlayer.position,
+                    age = cbsPlayer.age,
+                    age_diff = (cbsPlayer.age != null) ? cbsPlayer.age - positions.First(x => x.name == cbsPlayer.position).averageAge : null
+                };
+                if (_context.Players.Any(x => x.id == player.id))
+                    _context.Players.Update(player);
+                else
+                    _context.Players.Add(player);
+            }            
+
+            return "Players Updated";
         }
     }
 }
